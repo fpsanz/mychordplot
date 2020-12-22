@@ -1,17 +1,26 @@
 #' <Add Title>
-#'
+#' data are columns pathway and genes from enrichment object
 #' <Add Description>
 #'
 #' @import htmlwidgets
 #'
 #' @export
-mychordplot <- function(message, data, width = NULL, height = NULL, elementId = NULL) {
-  jsonk <- jsonlite::toJSON(data)
+mychordplot <- function(data, width = NULL, height = NULL, elementId = "chartdiv") {
+  names(data) <- c("Pathway","Genes")
+  data2 <- data %>% separate_rows(Genes, convert = TRUE)
+  data2 <- tidyr::pivot_wider(data2, names_from = Pathway, values_from = Genes)
+  k <- data.frame( gtools::combinations(length(names(data2)), v = names(data2), r=2) , stringsAsFactors = F)
+  values <- apply(k, MARGIN = 1, function(x){ length(intersect( unlist(data2[1, x[1]]), unlist(data2[1, x[2]])   )) } )
+  k$value = values
+  k <- k %>% filter(value!=0)
+  names(k)<- c("from","to","value")
+
+  jsonk <- jsonlite::toJSON(k)
   namesColors <- data$from
   namesColors <- jsonlite::toJSON( namesColors)
+  
   # forward options using x
   x = list(
-    message = message,
     data = jsonk,
     colors = namesColors
   )
