@@ -14,15 +14,17 @@ mychordplot <- function(data, width = NULL, height = NULL, elementId = "chartdiv
   k$value = values
   k <- k %>% filter(value!=0)
   names(k)<- c("from","to","value")
+  
+  colours <- colorRampPalette(RColorBrewer::brewer.pal(11, "Spectral"))(length(data$Pathway))
+  col <- data.frame(from = data$Pathway, nodeColor = colours)
+  col <- toJSON(col)
+  #k <- left_join(k, col, by=c("from"))
 
   jsonk <- jsonlite::toJSON(k)
-  namesColors <- data$from
-  namesColors <- jsonlite::toJSON( namesColors)
-  
   # forward options using x
   x = list(
     data = jsonk,
-    colors = namesColors
+    color = col
   )
 
   # create widget

@@ -16,14 +16,15 @@ am4core.useTheme(am4themes_animated);
 
 var chart = am4core.create("chartdiv", am4charts.ChordDiagram);
 
-
-chart.data = x.data;
+var colores = x.color;
+chart.data = x.color.concat(x.data);
 
 
 
 chart.dataFields.fromName = "from";
 chart.dataFields.toName = "to";
 chart.dataFields.value = "value";
+chart.dataFields.color = "nodeColor";
 
 chart.nodePadding = 0.5;
 chart.minNodeSize = 0.01;
@@ -121,29 +122,8 @@ nodeTemplate.adapter.add("fill", function(fill, target) {
 });
 
 var nodeLink = chart.links.template;
-var bullet = nodeLink.bullets.push(new am4charts.CircleBullet());
-bullet.fillOpacity = 1;
-bullet.circle.radius = 3;
-bullet.locationX = 0.5;
-
-// create animations
-chart.events.on("ready", function() {
-    for (var i = 0; i < chart.links.length; i++) {
-        var link = chart.links.getIndex(i);
-        var bullet = link.bullets.getIndex(0);
-
-        animateBullet(bullet);
-    }
-});
-
-function animateBullet(bullet) {
-    var duration = 3000 * Math.random() + 2000;
-    var animation = bullet.animate([{ property: "locationX", from: 0, to: 1 }], duration);
-    animation.events.on("animationended", function(event) {
-        animateBullet(event.target.object);
-    });
-}
-
+nodeLink.colorMode = "gradient";
+nodeLink.fillOpacity = 0.5;
 
 // Enable export
 chart.exporting.menu = new am4core.ExportMenu();
