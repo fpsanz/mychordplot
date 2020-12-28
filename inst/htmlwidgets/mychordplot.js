@@ -11,10 +11,15 @@ HTMLWidgets.widget({
     return {
 
       renderValue: function(x) {
+
 am4core.useTheme(am4themes_animated);
 // Themes end
+//var chart = am4core.create("chartdiv", am4charts.ChordDiagram);
+  var config =  JSON.parse('{"type":"ChordDiagram"}');
+  var cfg = x.div;
+  config['container']= cfg.toString();
+  var chart = am4core.createFromConfig( config );
 
-var chart = am4core.create("chartdiv", am4charts.ChordDiagram);
 
 var colores = x.color;
 chart.data = x.color.concat(x.data);

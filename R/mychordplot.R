@@ -5,7 +5,8 @@
 #' @import htmlwidgets
 #'
 #' @export
-mychordplot <- function(data, width = NULL, height = NULL, elementId = "chartdiv") {
+mychordplot <- function(data, width = NULL, height = NULL, elementId = NULL, div="chartdiv" ) {
+  require("tidyverse")
   names(data) <- c("Pathway","Genes")
   data2 <- data %>% separate_rows(Genes, convert = TRUE)
   data2 <- tidyr::pivot_wider(data2, names_from = Pathway, values_from = Genes)
@@ -17,14 +18,15 @@ mychordplot <- function(data, width = NULL, height = NULL, elementId = "chartdiv
   
   colours <- colorRampPalette(RColorBrewer::brewer.pal(11, "Spectral"))(length(data$Pathway))
   col <- data.frame(from = data$Pathway, nodeColor = colours)
-  col <- toJSON(col)
-  #k <- left_join(k, col, by=c("from"))
+  col <- jsonlite::toJSON(col)
 
   jsonk <- jsonlite::toJSON(k)
+  div <- div
   # forward options using x
   x = list(
     data = jsonk,
-    color = col
+    color = col,
+    div = div
   )
 
   # create widget
